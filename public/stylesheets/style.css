@@ -1,0 +1,87 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height: 100%; 
+  margin: 0; 
+  padding: 0;
+}
+
+a {
+  color: #00B7FF;
+}
+
+html { 
+    height: 95% 
+}
+
+.center {
+    text-align: center;
+}
+.right {
+    text-align: right;
+}
+
+.space-under-20
+{
+    margin-bottom: 20px;
+}
+
+.display-none {
+    display: none;
+}
+
+.popup{
+    background-color: #272B30;
+    color: #C8C8C8;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857;
+    border-radius: 10px;
+    box-shadow: 1px 1px 12px #555;
+    z-index: 20;
+    position: absolute;
+    padding: 30px;
+    display: none;
+    top: 15%;
+}
+
+.alert-login{
+    border-color: #000000;
+    color: #FFFFFF;
+    background-image: linear-gradient(to bottom, #AAAAAA 0px, #555555 100%);
+    background-repeat: repeat-x;
+    border-color: #000000;
+}
+
+#home-logo-div
+{
+    top: 10px;
+}
+
+#home-logo
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#park-loader
+{
+    height: 50px;
+    margin-left: 0;
+}
+
+#loader-init-ui
+{
+    position: absolute;
+    padding: 30px;
+    top: 15%;
+}
+#loader-init-ui img
+{
+	margin-right:auto;
+	margin-left:auto;
+}
+
+#map-canvas { 
+    height: 100% 
+}
