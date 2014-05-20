@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Twig = require("twig");
 var geolib = require('geolib');
+var redis = require("redis");
 
 var dico = require('dico-pokemon/dico-pokemon');
 var dbManager = require('db-manager/db-manager');
@@ -29,7 +30,7 @@ server.listen(8080);
 google_map_key = 'AIzaSyB6al2AF1Y9NP44-ad_cF55BmxnCpgymEY';
 env = "dev"; // dev
 
-// view engine setup
+/****** VIEW ENGINE SETUP ******/
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
 app.set("twig options", {
@@ -47,7 +48,23 @@ app.use(app.router);
 app.get('/', index.index);
 app.get('/park', park.park);
 
+/****** CACHE / DB ******/
+var host, port;
+if(env == "dev")
+{
+    host = "127.4.24.1";
+    port = 16379;
+}
+else
+{
+    host = "";
+    port = ""; 
+}
+
+var client = redis.createClient(port, host);
 dbManager.db_connect();
+
+var userSockets = new Array();
 
 /****************/
 /*              */
@@ -103,6 +120,10 @@ io.sockets.on('connection', function(socket) {
         handlerAuth(socket, data);
     });
     
+    socket.on('client_server_add_user', function(data){
+        handlerAddUser(socket, data);
+    });
+    
     socket.on('client_server_check_log', function(data){
         handlerCheckLog(socket, data);
     });
@@ -134,6 +155,26 @@ function handlerAuth(socket, data) {
         authOk(socket)
     }
     dbManager.db_userAuth(data.fb_id, callback);
+}
+
+function handlerAddUser(socket, data)
+{
+    // We store the user in redis
+    client.hset("user", "user_"+data.fb_id, data, redis.print);
+    /* How to get all the users
+    -----------------------------
+    client.hkeys("user", function (err, replies) {
+        console.log(replies.length + " replies:");
+        replies.forEach(function (reply, i) {
+            console.log("    " + i + ": " + reply);
+        });
+    });*/
+    
+    // We store the socket on the server
+    userSockets[data.fb_id] = socket;
+    
+    // We launch the cron
+    setInterval(cron, 5000);
 }
 
 function handlerCheckLog(socket, data) {
@@ -301,6 +342,14 @@ function selectVeryCommonPokemon() {
 var cron = function() {
     var u;
     var n;
+    
+    client.hkeys("user", function (err, replies) {
+        console.log(replies.length + " replies:");
+        replies.forEach(function (reply, i) {
+            // reply : user_516649118
+        });
+    })
+    
     for (var i = 0; i < __users.length; i++) {
         u = __users[i];
         n = new Date().getTime();
@@ -315,5 +364,3 @@ var cron = function() {
         askCoords(u, i);
     }
 };
-
-setInterval(cron, 5000);

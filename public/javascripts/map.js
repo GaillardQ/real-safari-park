@@ -57,6 +57,8 @@ function handlerInitNoGeolocation(errorFlag) {
     user_location = home_location;
     map.setCenter(user_location);
     placeUserMarker();
+    
+    stopParkLoader();
 }
 
 function initParkUI()
@@ -72,10 +74,16 @@ function initParkUI()
     }
 }
 
+function stopParkLoader()
+{
+    if($("#park-loader") != null)
+    {
+        $("#park-loader").hide();
+    }
+}
+
 function handlerFollowGeolocation(position) {
     user_location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-    actionOnMap();
 }
 
 function actionOnMap() {
@@ -106,6 +114,8 @@ function actionOnMap() {
     
         });
     }
+    
+    stopParkLoader()
 }
 
 function placeUserMarker(location) {

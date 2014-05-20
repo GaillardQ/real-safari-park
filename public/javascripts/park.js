@@ -29,6 +29,7 @@ function initPark(app_id, host) {
                 // login status of the person. In this case, we're handling the situation where they 
                 // have logged in to the app.
                 FB.api('/me', function(response) {
+                    socket = io.connect(host);
                     // On ne check plus le champs logged : perte de temps
                     /*socket.emit('client_server_check_log', { fb_id:response.id });
                     socket.on('server_client_answer_check_logged', function (data) {
@@ -40,6 +41,7 @@ function initPark(app_id, host) {
                             location.href = "/";
                         }
                     });*/
+                    socket.emit('client_server_add_user', { fb_id:response.id });
                     initialize(host);
                 });
             }
@@ -95,8 +97,8 @@ function sendPokemonsPlace(json) {
 }
 
 function initialize(host) {
-    socket = io.connect(host);
     initializeMap();
+    
     socket.on('server_client_ask_coords', function(data) {
         user_id = data.id;
         geoLocalization();
