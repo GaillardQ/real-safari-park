@@ -64,7 +64,7 @@ else
 var client = redis.createClient(port, host);
 
 client.on("error", function (err) {
-    console.log("Reds connection failed : " + err);
+    console.log("Redis error : " + err);
 });
 
 dbManager.db_connect();
@@ -188,13 +188,17 @@ function handlerCheckLog(socket, data) {
 
 function handlerPostCoords(data) {
     var id = data.id;
-    var user = __users[id];
-    if(user !== null && user !== undefined)
-    {
-        __users[id].coords = data.coords;
-        checkPokemon(__users[id]);
-        __users[id].updated = new Date().getTime();
-    }
+    
+    client.hget("user", "user_"+id, function(error, user) {
+        if(error == null && user != null)
+        {
+            var user_data = JSON.parse(user);
+            user_data.coords = data.coords;
+            checkPokemon(user_data.fb_id, user_data.coords);
+            user_data.updated_at = new Date().getTime();
+            client.hset("user","user_"+user_data.fb_id, JSON.stringify(user_data), redis.print);
+        }
+    });
 }
 
 function handlerPostPokemons(data, socket) {
@@ -236,6 +240,7 @@ function sendResponseCheckLogged(socket, is_logged)
 }
 
 function askCoords(fb_id) {
+
     var socket = userSockets[fb_id];
     socket.emit('server_client_ask_coords', {
         id: fb_id
@@ -255,7 +260,13 @@ function sendPokemons(json, socket)
 }
 
 /********************* METIER *********************/
-function checkPokemon(user) {
+function checkPokemon(fb_id, coords) {
+    function callback()
+    {
+        console.log("We have checked the ploekmon in the area for the user "+fb_id);
+    }
+    dbManager.db_checkPokemonInArea(fb_id, coords, callback);
+    /*
     var user_pokemon = [];
     var p, obj, center;
     for (var i = 0; i < __all_pokemons.length; i++) {   
@@ -279,6 +290,7 @@ function checkPokemon(user) {
     {
         createAPokemon(user, nb);
     }
+    */
 }
 
 function getPokemonData() {
@@ -347,22 +359,34 @@ var cron = function() {
     var fb_id, updated_at;
     
     client.hgetall("user", function (err, obj) {
-        keys = Object.keys( obj );
-        keys.forEach(function (user, i) {
-            user_data = JSON.parse(obj[user]);
-            
-            fb_id = user_data.fb_id;
-            updated_at = user_data.updated_at;
-            
-             n = new Date().getTime();
-             // Si la date de dernière mise à jour date de plus de 15 secondes, on supprime le user
-            if (n - u.updated > 15000) {
-                delete obj[user];
-                return;
-            }
-            
-            // On lui demande ses nouvelles coordonées
-            askCoords(fb_id);
-        });
+        if(obj != null)
+        {
+            keys = Object.keys( obj );
+            keys.forEach(function (user, i) {
+                user_data = JSON.parse(obj[user]);
+                
+                fb_id = user_data.fb_id;
+                updated_at = user_data.updated_at;
+                
+                n = new Date().getTime();
+                
+                var delta = n - updated_at;
+                
+                console.log(fb_id+" ("+updated_at+") : "+delta); 
+                // Si la date de dernière mise à jour date de plus de 15 secondes, on supprime le user
+                if (delta > 15000 || updated_at == undefined) {
+                    delete obj[user];
+                    
+                    client.hdel("user", "user_"+fb_id, function(err) {
+                        console.log("Deletion of user : "+fb_id);
+                    });
+                    
+                    return;
+                }
+                
+                // On lui demande ses nouvelles coordonées
+                askCoords(fb_id);
+            });
+        }
     });
 };
