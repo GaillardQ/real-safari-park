@@ -62,9 +62,14 @@ else
 }
 
 var client = redis.createClient(port, host);
+
+client.on("error", function (err) {
+    console.log("Reds connection failed : " + err);
+});
+
 dbManager.db_connect();
 
-var userSockets = new Array();
+var userSockets = {};
 
 /****************/
 /*              */
@@ -147,7 +152,7 @@ var __users = [];
 var __radius = 65;
 var __all_pokemons = [];
 
-/*** MESSAGES ***/
+/********************* MESSAGES *********************/
 function handlerAuth(socket, data) {
     function callback()
     {
@@ -160,15 +165,11 @@ function handlerAuth(socket, data) {
 function handlerAddUser(socket, data)
 {
     // We store the user in redis
-    client.hset("user", "user_"+data.fb_id, data, redis.print);
-    /* How to get all the users
-    -----------------------------
-    client.hkeys("user", function (err, replies) {
-        console.log(replies.length + " replies:");
-        replies.forEach(function (reply, i) {
-            console.log("    " + i + ": " + reply);
-        });
-    });*/
+    var user = {};
+    user.fb_id = data.fb_id;
+    user.updated_at = new Date().getTime();
+    
+    client.hset("user", "user_"+data.fb_id, JSON.stringify(user), redis.print);
     
     // We store the socket on the server
     userSockets[data.fb_id] = socket;
@@ -223,7 +224,7 @@ function handlerPostPokemons(data, socket) {
 }
 
 
-/* send */
+/********************* SEND *********************/
 function authOk(socket)
 {
     socket.emit('server_client_auth_ok', {});
@@ -234,9 +235,10 @@ function sendResponseCheckLogged(socket, is_logged)
     socket.emit('server_client_answer_check_logged', {is_logged: is_logged});
 }
 
-function askCoords(user, id) {
-    user.socket.emit('server_client_ask_coords', {
-        id: id
+function askCoords(fb_id) {
+    var socket = userSockets[fb_id];
+    socket.emit('server_client_ask_coords', {
+        id: fb_id
     });
 }
 
@@ -252,7 +254,7 @@ function sendPokemons(json, socket)
     socket.emit('server_client_send_pokemons', json);
 }
 
-/*** METIER ***/
+/********************* METIER *********************/
 function checkPokemon(user) {
     var user_pokemon = [];
     var p, obj, center;
@@ -338,29 +340,29 @@ function selectVeryCommonPokemon() {
     return dico.getVeryCommonPokemon(index);
 }
 
-/*** TRAITEMENT ***/
+/********************* TRAITEMENT *********************/
 var cron = function() {
-    var u;
-    var n;
+    var u,n,keys,user_data;
     
-    client.hkeys("user", function (err, replies) {
-        console.log(replies.length + " replies:");
-        replies.forEach(function (reply, i) {
-            // reply : user_516649118
+    var fb_id, updated_at;
+    
+    client.hgetall("user", function (err, obj) {
+        keys = Object.keys( obj );
+        keys.forEach(function (user, i) {
+            user_data = JSON.parse(obj[user]);
+            
+            fb_id = user_data.fb_id;
+            updated_at = user_data.updated_at;
+            
+             n = new Date().getTime();
+             // Si la date de dernière mise à jour date de plus de 15 secondes, on supprime le user
+            if (n - u.updated > 15000) {
+                delete obj[user];
+                return;
+            }
+            
+            // On lui demande ses nouvelles coordonées
+            askCoords(fb_id);
         });
-    })
-    
-    for (var i = 0; i < __users.length; i++) {
-        u = __users[i];
-        n = new Date().getTime();
-
-        // Si la date de dernière mise à jour date de plus de 15 secondes, on supprime le user
-        if (n - u.updated > 15000) {
-            __users.splice(i, 1);
-            continue;
-        }
-
-        // On lui demande ses nouvelles coordonées
-        askCoords(u, i);
-    }
+    });
 };
