@@ -107,6 +107,7 @@ function initialize(host) {
     socket.on('server_client_ask_new_points', function(data) {
         var pokemons = [];
         var nb = data.nb;
+        user_area_radius = data.radius;
 
         var p, m, n, d;
         var json = {

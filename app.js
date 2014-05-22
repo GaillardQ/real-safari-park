@@ -29,6 +29,8 @@ server.listen(8080);
 /****** GLOBALES ******/
 google_map_key = 'AIzaSyB6al2AF1Y9NP44-ad_cF55BmxnCpgymEY';
 env = "dev"; // dev
+zone_length = 65;
+nb_pokemon_zone = 10;
 
 /****** VIEW ENGINE SETUP ******/
 app.set('views', path.join(__dirname, 'views'));
@@ -203,28 +205,31 @@ function handlerPostCoords(data) {
 
 function handlerPostPokemons(data, socket) {
     var pokemon, area_pokemon = [];
+    // Pour tous les nouveaux points reçus
     for (var i = 0; i < data.pokemons.length; i++) {
+        // on crée un pokemon
         pokemon = getPokemonData();
+        // on lui attribue ses coordonnées
         pokemon.coords = data.pokemons[i].coords;
+        // on le stock dans un tableau
         area_pokemon[i] = pokemon;
     }
-    __all_pokemons = __all_pokemons.concat(area_pokemon);
-    console.log('user_id : '+data.user_id);
-    var user = __users[data.user_id];
-    if(user === undefined)
+    
+    var callback = function()
     {
-        handlerConnection(socket);
-    }
-    if(user.pokemons !== null && user.pokemons !== undefined)
-    {
-        user.pokemons = user.pokemons.concat(area_pokemon);
-    }
-    else
-    {
-        user.pokemons = area_pokemon;
-    }
-    var json = {pokemons: area_pokemon}
-    sendPokemons(json, socket);
+        console.log("We have saved the new popped pokemons");
+    };
+    
+    // on sauvegarde ce tableau en base de données
+    dbManager.db_savePoppedPokemons(area_pokemon, callback);
+    
+    // on ajoute ces pokemons dans la liste de ceux de l'utilisateur
+    var fb_id = data.user_id;
+    
+    // on envoi les pokemons à l'utilisateur pour affichage
+    
+    //var json = {pokemons: area_pokemon}
+    //sendPokemons(json, socket);
 }
 
 
@@ -247,10 +252,12 @@ function askCoords(fb_id) {
     });
 }
 
-function createAPokemon(user, nb) {
-    user.socket.emit('server_client_ask_new_points', {
+function createAPokemon(fb_id, nb) {
+    var socket = userSockets[fb_id];
+    socket.emit('server_client_ask_new_points', {
         nb: nb,
-        user_id: user.id
+        user_id: fb_id,
+        radius : zone_length
     });
 }
 
@@ -261,36 +268,26 @@ function sendPokemons(json, socket)
 
 /********************* METIER *********************/
 function checkPokemon(fb_id, coords) {
-    function callback()
+    function callback(_result)
     {
         console.log("We have checked the ploekmon in the area for the user "+fb_id);
-    }
-    dbManager.db_checkPokemonInArea(fb_id, coords, callback);
-    /*
-    var user_pokemon = [];
-    var p, obj, center;
-    for (var i = 0; i < __all_pokemons.length; i++) {   
-        p = __all_pokemons[i];
-        obj = {
-            latitude: p.coords.k,
-            longitude: p.coords.A
-        };
-        center = {
-            latitude: user.coords.lat,
-            longitude: user.coords.long
-        };
-        if (geolib.isPointInCircle(obj, center, __radius)) {
-            user_pokemon[user_pokemon.length] = p;
+        
+        var util = require('util');
+        
+        var data = _result.rows;
+        for(var d in data)
+        {
+            console.log("Pokemon : "+util.inspect(d, false, null));
+            // @TODO
+            // Ajouter le pokemon dans les infos du user dans redis
+        }
+        var nb = nb_pokemon_zone - _result.rowCount;
+        if(nb > 0)
+        {
+            createAPokemon(fb_id, nb);
         }
     }
-
-    //Création des pokemons
-    var nb = 20 - user_pokemon.length;
-    if(nb > 0)
-    {
-        createAPokemon(user, nb);
-    }
-    */
+    dbManager.db_checkPokemonInArea(fb_id, coords, zone_length, nb_pokemon_zone, callback);
 }
 
 function getPokemonData() {
