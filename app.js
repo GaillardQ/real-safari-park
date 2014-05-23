@@ -207,29 +207,44 @@ function handlerPostPokemons(data, socket) {
     var pokemon, area_pokemon = [];
     // Pour tous les nouveaux points reçus
     for (var i = 0; i < data.pokemons.length; i++) {
+        pokemon = {};
         // on crée un pokemon
-        pokemon = getPokemonData();
+        pokemon.rarity = getPokemonRarity();
         // on lui attribue ses coordonnées
         pokemon.coords = data.pokemons[i].coords;
         // on le stock dans un tableau
         area_pokemon[i] = pokemon;
     }
     
-    var callback = function()
+    var callback_create = function(pokemons)
     {
-        console.log("We have saved the new popped pokemons");
+        /*var p;
+        console.log("Nous venons de créer les pokemons suivants :");
+        for(var i in pokemons)
+        {
+            p = pokemons[i];
+            console.log("- "+p.data.name+" : "+p.coords);
+        }*/
+        var util = require("util");
+        console.log(util.inspect(pokemons, false, null));
+        var callback_save = function()
+        {
+            console.log("We have saved the new popped pokemons");
+        };
+        
+        // on sauvegarde ce tableau en base de données
+        //dbManager.db_savePoppedPokemons(area_pokemon, callback_save);
+        
+        // on ajoute ces pokemons dans la liste de ceux de l'utilisateur
+        var fb_id = data.user_id;
+        
+        // on envoi les pokemons à l'utilisateur pour affichage
+        
+        //var json = {pokemons: area_pokemon}
+        //sendPokemons(json, socket);
     };
+    dbManager.db_createNewPokemons(area_pokemon, callback_create);
     
-    // on sauvegarde ce tableau en base de données
-    dbManager.db_savePoppedPokemons(area_pokemon, callback);
-    
-    // on ajoute ces pokemons dans la liste de ceux de l'utilisateur
-    var fb_id = data.user_id;
-    
-    // on envoi les pokemons à l'utilisateur pour affichage
-    
-    //var json = {pokemons: area_pokemon}
-    //sendPokemons(json, socket);
 }
 
 
@@ -290,63 +305,27 @@ function checkPokemon(fb_id, coords) {
     dbManager.db_checkPokemonInArea(fb_id, coords, zone_length, nb_pokemon_zone, callback);
 }
 
-function getPokemonData() {
+function getPokemonRarity() {
     var r = Math.random();
     var x = Math.floor(r * 10000 + 1);
     if (x == 1) { // 1
-        return selectUltimatePokemon();
+        return "06_ultimate"
     }
     else if (x > 1 && x <=300) { // 299
-        return selectVeryRarePokemon();
+        return "05_very_rare";
     }
     else if (x > 300 && x <= 1100) { // 800
-        return selectRarePokemon();
+        return "04_rare";
     }
     else if (x > 1100 && x <= 3000) { // 1 900
-        return selectNotCommonPokemon();
+        return "03_not_common";
     }
     else if (x > 3000 && x <= 6000) { // 3 000
-        return selectCommonPokemon();
+        return "02_common";
     }
     else { // 4000
-        return selectVeryCommonPokemon();
+        return "01_very_common";
     }
-}
-
-function selectUltimatePokemon() {
-    var n = dico.ultimate.length;
-    var index = Math.floor(Math.random()*n);
-    return dico.getUltimatePokemon(index);
-}
-
-function selectVeryRarePokemon() {
-    var n = dico.very_rare.length;
-    var index = Math.floor(Math.random()*n);
-    return dico.getVeryRarePokemon(index);
-}
-
-function selectRarePokemon() {
-    var n = dico.rare.length;
-    var index = Math.floor(Math.random()*n);
-    return dico.getRarePokemon(index);
-}
-
-function selectNotCommonPokemon() {
-    var n = dico.not_common.length;
-    var index = Math.floor(Math.random()*n);
-    return dico.getNotCommonPokemon(index);
-}
-
-function selectCommonPokemon() {
-    var n = dico.common.length;
-    var index = Math.floor(Math.random()*n);
-    return dico.getCommonPokemon(index);
-}
-
-function selectVeryCommonPokemon() {
-    var n = dico.very_common.length;
-    var index = Math.floor(Math.random()*n);
-    return dico.getVeryCommonPokemon(index);
 }
 
 /********************* TRAITEMENT *********************/
