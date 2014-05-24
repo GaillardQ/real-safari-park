@@ -206,7 +206,7 @@ function handlerPostCoords(data) {
 function handlerPostPokemons(data, socket) {
     var pokemon, area_pokemon = [];
     // Pour tous les nouveaux points reçus
-    for (var i = 0; i < data.pokemons.length; i++) {
+    for (var i = 0; i < 2/*data.pokemons.length*/; i++) {
         pokemon = {};
         // on crée un pokemon
         pokemon.rarity = getPokemonRarity();
