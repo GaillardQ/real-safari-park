@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var Twig = require("twig");
 var geolib = require('geolib');
 var redis = require("redis");
+var util = require('util');
 
 var dico = require('dico-pokemon/dico-pokemon');
 var dbManager = require('db-manager/db-manager');
@@ -206,7 +207,7 @@ function handlerPostCoords(data) {
 function handlerPostPokemons(data, socket) {
     var pokemon, area_pokemon = [];
     // Pour tous les nouveaux points reçus
-    for (var i = 0; i < 2/*data.pokemons.length*/; i++) {
+    for (var i = 0; i < data.pokemons.length; i++) {
         pokemon = {};
         // on crée un pokemon
         pokemon.rarity = getPokemonRarity();
@@ -218,15 +219,13 @@ function handlerPostPokemons(data, socket) {
     
     var callback_create = function(pokemons)
     {
-        /*var p;
+        var p;
         console.log("Nous venons de créer les pokemons suivants :");
         for(var i in pokemons)
         {
             p = pokemons[i];
-            console.log("- "+p.data.name+" : "+p.coords);
-        }*/
-        var util = require("util");
-        console.log(util.inspect(pokemons, false, null));
+            console.log("- "+p.name+"("+p.rarity+") : "+util.inspect(p.coords, false, null));
+        }
         var callback_save = function()
         {
             console.log("We have saved the new popped pokemons");
