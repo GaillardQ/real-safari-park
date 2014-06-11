@@ -139,12 +139,14 @@ function initialize(host) {
                 p.setMap(null);
             }
         }
-
+        
+        console.log("All pokemons to show : "+data);
+        
         map_pokemons = null;
 
         for (var i = 0; i < nb; i++) {
             var position = new google.maps.LatLng(data.pokemons[i].coords.k, data.pokemons[i].coords.A);
-            console.log('Pokemon position : ' + position);
+            //console.log('Pokemon : ' + position);
             var pokemon_coords = new google.maps.Marker({
                 position: position,
                 title: "Pokemon " + i,

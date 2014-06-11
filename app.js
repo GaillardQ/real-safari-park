@@ -219,13 +219,6 @@ function handlerPostPokemons(data, socket) {
     
     var callback_create = function(pokemons)
     {
-        var p;
-        console.log("Nous venons de créer les pokemons suivants :");
-        for(var i in pokemons)
-        {
-            p = pokemons[i];
-            console.log("- "+p.name+"("+p.rarity+") : "+util.inspect(p.coords, false, null));
-        }
         var callback_save = function()
         {
             console.log("We have saved the new popped pokemons");
@@ -239,8 +232,8 @@ function handlerPostPokemons(data, socket) {
         
         // on envoi les pokemons à l'utilisateur pour affichage
         
-        //var json = {pokemons: area_pokemon}
-        //sendPokemons(json, socket);
+        var json = {pokemons: area_pokemon}
+        sendPokemons(json, socket);
     };
     dbManager.db_createNewPokemons(area_pokemon, callback_create);
     
