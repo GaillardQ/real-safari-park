@@ -86,7 +86,7 @@ function sendCoords(coords) {
         id: user_id,
         coords: {
             lat: coords.k,
-            long: coords.A
+            long: coords.B
         }
     };
     socket.emit('client_server_answer_coords', json);

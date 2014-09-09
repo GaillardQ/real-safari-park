@@ -29,7 +29,8 @@ server.listen(8080);
 
 /****** GLOBALES ******/
 google_map_key = 'AIzaSyB6al2AF1Y9NP44-ad_cF55BmxnCpgymEY';
-env = "dev"; // dev
+debug_mode = true;
+env = "dev"; // dev/dev_c9/prod
 zone_length = 65;
 nb_pokemon_zone = 10;
 
@@ -52,25 +53,33 @@ app.get('/', index.index);
 app.get('/park', park.park);
 
 /****** CACHE / DB ******/
-var host, port;
+var host_redis, port_redis, host_db;
 if(env == "dev")
 {
-    host = "127.4.24.1";
-    port = 16379;
+    host_redis = "127.4.24.1";
+    port_redis = 16379;
+    host_db = "localhost";
+}
+else if(env === "dev_c9")
+{
+    host_redis = "127.4.24.1";
+    port_redis = "16379";
+    host_db = "real-safari-park.cwazuxifehxl.us-west-2.rds.amazonaws.com";
 }
 else
 {
-    host = "";
-    port = ""; 
+    host_redis = "";
+    port_redis = ""; 
+    host_db = "real-safari-park.cwazuxifehxl.us-west-2.rds.amazonaws.com";
 }
 
-var client = redis.createClient(port, host);
+var client = redis.createClient(port_redis, host_redis);
 
 client.on("error", function (err) {
     console.log("Redis error : " + err);
 });
 
-dbManager.db_connect();
+dbManager.db_connect(host_db);
 
 var userSockets = {};
 
@@ -159,7 +168,10 @@ var __all_pokemons = [];
 function handlerAuth(socket, data) {
     function callback()
     {
-        console.log("User inserted or updated, we can redirect to the park ! :D");
+	if(debug_mode == true)
+	{
+            console.log("User inserted or updated, we can redirect to the park ! :D");
+	}
         authOk(socket)
     }
     dbManager.db_userAuth(data.fb_id, callback);
@@ -221,7 +233,10 @@ function handlerPostPokemons(data, socket) {
     {
         var callback_save = function()
         {
-            console.log("We have saved the new popped pokemons");
+            if(debug_mode == true)
+	    {
+                console.log("We have saved the new popped pokemons");
+   	    }
         };
         
         // on sauvegarde ce tableau en base de données
@@ -277,14 +292,20 @@ function sendPokemons(json, socket)
 function checkPokemon(fb_id, coords) {
     function callback(_result)
     {
-        console.log("We have checked the ploekmon in the area for the user "+fb_id);
+	if(debug_mode == true)
+	{
+            console.log("We have checked the ploekmon in the area for the user "+fb_id);
+	}
         
         var util = require('util');
         
         var data = _result.rows;
         for(var d in data)
         {
-            console.log("Pokemon : "+util.inspect(d, false, null));
+            if(debug_mode == true)
+	    {
+                console.log("Pokemon : "+util.inspect(d, false, null));
+	    }
             // @TODO
             // Ajouter le pokemon dans les infos du user dans redis
         }
@@ -340,13 +361,19 @@ var cron = function() {
                 
                 var delta = n - updated_at;
                 
-                console.log(fb_id+" ("+updated_at+") : "+delta); 
+                if(debug_mode == true)
+		{
+            	    console.log("User :"+fb_id+" (updated at :"+updated_at+") (delta :"+delta+")"); 
+		}
                 // Si la date de dernière mise à jour date de plus de 15 secondes, on supprime le user
                 if (delta > 15000 || updated_at == undefined) {
                     delete obj[user];
                     
                     client.hdel("user", "user_"+fb_id, function(err) {
-                        console.log("Deletion of user : "+fb_id);
+                        if(debug_mode == true)
+			{
+			    console.log("Deletion of user : "+fb_id);
+			}
                     });
                     
                     return;
