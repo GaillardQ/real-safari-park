@@ -10,24 +10,62 @@
         <link rel='stylesheet' href='/stylesheets/bootstrap-theme.min.css' />
         <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
         <link rel='stylesheet' href='/stylesheets/style.css' />
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ maps_key }}&sensor=true"></script>
         <script src="/javascripts/jquery-1.10.2.min.js"></script>
         <script src="/javascripts/bootstrap.min.js"></script>
+        <script src="/javascripts/globals.js"></script>
+        <script src="/javascripts/map.js"></script>
         <script src="/javascripts/index.js"></script>
         <script src="/socket.io/socket.io.js"></script>
     </head>
     
-    <body onload="initIndex('{{app_id}}', '{{ host }}')">
-        <div id="fb-root"></div>
-        
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-2 col-md-offset-3 col-lg-offset-4 center space-under-20" id="home-logo-div">
-            <img src="../images/logo.png" alt="logo" class="img-responsive" id="home-logo" />
+    <body onLoad="initIndex('{{app_id}}', '{{ host }}')">
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container" id="div-park-loader">
+                <div class="navbar-header">
+                    <img src="../images/loader-park.gif" alt="" class="img-responsive navbar-brand" id="park-loader" />
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../">Pokemon Map</a>
+                    <button class="navbar-toggle" data-target="#navbar-main" data-toggle="collapse"
+                    type="button">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="navbar-main" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a onClick="toggleHelp();return false;">Aide</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav" style="float:right;">
+                        <li>
+                            <div>
+                                <div class="fb-login-button" 
+                                data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"
+                                scope="email, user_location, publish_actions"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
-            <div class="fb-login-button" 
-            data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"
-            scope="email, user_location, publish_actions"></div>
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-2 col-md-offset-3 col-lg-offset-4 popup"
+        id="help-popup">
+            <h3>Aide</h3>
+            <br />
+            <h6>iOS</h6>Réglages > Confidentialité > Service de localisation > Autoriser
+            Safari
+            <br />
+            <br />
+            <button type="button" class="btn btn-default right" onClick="toggleHelp();">Close</button>
         </div>
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-2 col-md-offset-3 col-lg-offset-4"  id="loader-init-ui">
+            <img src="../images/logo.png" alt="loading" class="img-responsive" />
+        </div>
+        <div id="map-canvas" class="display-none" />
         
         <script>
             (function(i, s, o, g, r, a, m) {

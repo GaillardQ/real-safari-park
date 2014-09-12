@@ -15,7 +15,7 @@ var dbManager = require('db-manager/db-manager');
 
 var routes = require('./routes');
 var index = require('./routes/index');
-var park = require('./routes/park');
+//var park = require('./routes/park');
 
 var app = express();
 app.set('port', process.env.PORT || 3000);
@@ -29,7 +29,7 @@ server.listen(8080);
 
 /****** GLOBALES ******/
 google_map_key = 'AIzaSyB6al2AF1Y9NP44-ad_cF55BmxnCpgymEY';
-debug_mode = true;
+debug_mode = false;
 env = "dev"; // dev/dev_c9/prod
 zone_length = 65;
 nb_pokemon_zone = 10;
@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
 app.get('/', index.index);
-app.get('/park', park.park);
+//app.get('/park', park.park);
 
 /****** CACHE / DB ******/
 var host_redis, port_redis, host_db;
@@ -60,7 +60,7 @@ if(env == "dev")
     port_redis = 16379;
     host_db = "localhost";
 }
-else if(env === "dev_c9")
+else if(env == "dev_c9")
 {
     host_redis = "127.4.24.1";
     port_redis = "16379";
@@ -100,7 +100,7 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (app.get('env') == 'development') {
     app.use(function(err, req, res, next) {
         res.render('error', {
             message: err.message,
@@ -166,31 +166,24 @@ var __all_pokemons = [];
 
 /********************* MESSAGES *********************/
 function handlerAuth(socket, data) {
+    console.log("Socket : "+util.inspect(socket, false, null));
     function callback()
     {
 	if(debug_mode == true)
 	{
             console.log("User inserted or updated, we can redirect to the park ! :D");
 	}
-        authOk(socket)
+        authOk(socket, data);
     }
-    dbManager.db_userAuth(data.fb_id, callback);
-}
-
-function handlerAddUser(socket, data)
-{
-    // We store the user in redis
-    var user = {};
-    user.fb_id = data.fb_id;
-    user.updated_at = new Date().getTime();
-    
-    client.hset("user", "user_"+data.fb_id, JSON.stringify(user), redis.print);
-    
-    // We store the socket on the server
-    userSockets[data.fb_id] = socket;
-    
-    // We launch the cron
-    setInterval(cron, 5000);
+    if(data.fb_id != "unknown_user")
+    {
+        dbManager.db_userAuth(data.fb_id, callback);
+    }
+    else
+    {
+        var json = {data: data.fb_id};
+        authOk(socket, json);
+    }
 }
 
 function handlerCheckLog(socket, data) {
@@ -219,6 +212,11 @@ function handlerPostCoords(data) {
 function handlerPostPokemons(data, socket) {
     var pokemon, area_pokemon = [];
     // Pour tous les nouveaux points reçus
+    
+    if(debug_mode == true)
+    {
+        console.log("We have received a list of points ("+data.pokemons.length+"), we will create the pokemon");
+    }
     for (var i = 0; i < data.pokemons.length; i++) {
         pokemon = {};
         // on crée un pokemon
@@ -233,22 +231,52 @@ function handlerPostPokemons(data, socket) {
     {
         var callback_save = function()
         {
+            // on ajoute ces pokemons dans la liste de ceux de l'utilisateur
+            // et on met à jour l'info "updated_at" de l'utilisateur
+            var fb_id = data.user_id;
+
+            client.hget("user", "user_"+fb_id, function(error, user) {
+                if(error == null && user != null)
+                {
+                    var user_data = JSON.parse(user);
+                    user_data.coords = data.coords;
+                    user_data.updated_at = new Date().getTime();
+                    var user_pokemons = user_data.pokemon;
+                    var i = user_pokemons.length;
+                    for(var j=0; j<pokemons.length; j++)
+                    {
+                        var d = pokemons[j];
+                        if(debug_mode == true)
+                        {
+                            console.log("Pokemon : "+util.inspect(d, false, null));
+                        }
+
+                        user_pokemons[i++] = {
+                            id:d.id,
+                            name:d.name,
+                            number:d.number,
+                            gif:d.gif,
+                            png:d.png,
+                            category:d.category,
+                            place:d.place,
+                            expires_at:d.expires_at
+                        };    
+                    }
+                    client.hset("user","user_"+user_data.fb_id, JSON.stringify(user_data), redis.print);
+                }
+            });
             if(debug_mode == true)
 	    {
-                console.log("We have saved the new popped pokemons");
+                console.log("We have saved the new popped pokemons in redis and in the db");
    	    }
+            
+            // on envoi les pokemons à l'utilisateur pour affichage
+            var json = {pokemons: area_pokemon}
+            sendPokemons(json, socket);
         };
         
         // on sauvegarde ce tableau en base de données
-        //dbManager.db_savePoppedPokemons(area_pokemon, callback_save);
-        
-        // on ajoute ces pokemons dans la liste de ceux de l'utilisateur
-        var fb_id = data.user_id;
-        
-        // on envoi les pokemons à l'utilisateur pour affichage
-        
-        var json = {pokemons: area_pokemon}
-        sendPokemons(json, socket);
+        dbManager.db_savePoppedPokemons(pokemons, callback_save);
     };
     dbManager.db_createNewPokemons(area_pokemon, callback_create);
     
@@ -256,8 +284,20 @@ function handlerPostPokemons(data, socket) {
 
 
 /********************* SEND *********************/
-function authOk(socket)
+function authOk(socket, data)
 {
+    // We store the user in redis
+    var user = {};
+    user.fb_id = data.fb_id;
+    user.updated_at = new Date().getTime();
+    
+    client.hset("user", "user_"+data.fb_id, JSON.stringify(user), redis.print);
+    
+    // We store the socket on the server
+    userSockets[data.fb_id] = socket;
+    
+    // We launch the cron
+    setInterval(cron, 5000);
     socket.emit('server_client_auth_ok', {});
 }
 
@@ -294,21 +334,45 @@ function checkPokemon(fb_id, coords) {
     {
 	if(debug_mode == true)
 	{
-            console.log("We have checked the ploekmon in the area for the user "+fb_id);
+            console.log("We have checked the pokemon in the area for the user "+fb_id);
 	}
         
-        var util = require('util');
-        
         var data = _result.rows;
+        var json = [];
+        var i = 0;
         for(var d in data)
         {
             if(debug_mode == true)
 	    {
                 console.log("Pokemon : "+util.inspect(d, false, null));
-	    }
-            // @TODO
-            // Ajouter le pokemon dans les infos du user dans redis
+            }
+            
+            json[i++] = {
+                id:d.id,
+                name:d.name,
+                number:d.number,
+                gif:d.gif,
+                png:d.png,
+                category:d.category,
+                place:d.place,
+                expires_at:d.expires_at
+            };    
         }
+        
+        if(i > 0)
+        {
+            // Ajouter les pokemons dans les infos du user dans redis
+            client.hget("user", "user_"+fb_id, function(error, user) {
+                if(error == null && user != null)
+                {
+                    var user_data = JSON.parse(user);
+                    user_data.updated_at = new Date().getTime();
+                    user_data.pokemon = json;
+                    client.hset("user","user_"+user_data.fb_id, JSON.stringify(user_data), redis.print);
+                }
+            });
+        }
+        
         var nb = nb_pokemon_zone - _result.rowCount;
         if(nb > 0)
         {

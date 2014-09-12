@@ -20,8 +20,13 @@ exports.index = function(req, res) {
         url = req.protocol+"://"+req.headers.host;
     }
 
+    res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.header("Pragma", "no-cache");
+    res.header("Expires", 0);
+    
     res.render('index', {
         title: 'Real Safari Park',
+        maps_key: google_map_key,
         app_id: app_id,
         host: url
     });

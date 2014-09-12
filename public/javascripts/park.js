@@ -145,8 +145,8 @@ function initialize(host) {
         map_pokemons = null;
 
         for (var i = 0; i < nb; i++) {
-            var position = new google.maps.LatLng(data.pokemons[i].coords.k, data.pokemons[i].coords.A);
-            //console.log('Pokemon : ' + position);
+            var position = new google.maps.LatLng(data.pokemons[i].coords.k, data.pokemons[i].coords.B);
+            console.log('Pokemon ('+data.pokemons[i].png+'): ' + position);
             var pokemon_coords = new google.maps.Marker({
                 position: position,
                 title: "Pokemon " + i,
