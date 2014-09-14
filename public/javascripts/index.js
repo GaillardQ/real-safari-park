@@ -1,4 +1,5 @@
 var socket;
+
 function initIndex(app_id, host) {
     initialize(host);
     socket_auth("unknown_user");
@@ -21,7 +22,6 @@ function initIndex(app_id, host) {
                 // The response object is returned with a status field that lets the app know the current
                 // login status of the person. In this case, we're handling the situation where they 
                 // have logged in to the app.
-                alert("CONNECTED");
                 next(host);
             }
             else if (response.status === 'not_authorized') {
@@ -32,7 +32,6 @@ function initIndex(app_id, host) {
                 // (1) JavaScript created popup windows are blocked by most browsers unless they 
                 // result from direct interaction from people using the app (such as a mouse click)
                 // (2) it is a bad experience to be continually prompted to login upon page load.
-                alert("not_authorized");
                 FB.login();
             }
             else {
@@ -41,7 +40,6 @@ function initIndex(app_id, host) {
                 // of whether they are logged into the app. If they aren't then they'll see the Login
                 // dialog right after they log in to Facebook. 
                 // The same caveats as above apply to the FB.login() call here.
-                alert("ELSE");
                 FB.login();
             }
         });
@@ -64,9 +62,9 @@ function initIndex(app_id, host) {
 
 function next(host)
 {
-    console.log('Welcome!  Fetching your information.... ');
+    //console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
-        console.log('Good to see you, ' + response.name + '.');
+        //console.log('Good to see you, ' + response.name + '.');
         socket_auth(response.id);
     });
 }
@@ -140,26 +138,26 @@ function displayPokemonsOnMap(data)
 
     if (map_pokemons !== null && map_pokemons !== undefined) {
         var p;
-        for (var i = 0; i < nb; i++) {
+        for (var i = 0; i < map_pokemons.length; i++) {
             p = map_pokemons[i];
             p.setMap(null);
         }
     }
 
-    console.log("All pokemons to show : "+data);
-
     map_pokemons = null;
+    map_pokemons = new Array();
 
     for (var i = 0; i < nb; i++) {
         var position = new google.maps.LatLng(data.pokemons[i].coords.k, data.pokemons[i].coords.B);
-        console.log('Pokemon ('+data.pokemons[i].png+'): ' + position);
+        //console.log('Pokemon ('+data.pokemons[i].png+'): ' + position);
         var pokemon_coords = new google.maps.Marker({
             position: position,
             title: "Pokemon " + i,
             icon: data.pokemons[i].png
         });
-
         pokemon_coords.setMap(map);
+        
+        map_pokemons.push(pokemon_coords);
     }
 }
 

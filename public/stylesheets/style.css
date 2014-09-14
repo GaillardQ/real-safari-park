@@ -30,6 +30,26 @@ html {
     display: none;
 }
 
+.no-margin-left
+{
+    margin-left: 0;
+}
+
+.no-margin-right
+{
+    margin-right: 0;
+}
+
+.no-padding-left
+{
+    padding-left: 0;
+}
+
+.no-padding-right
+{
+    padding-right: 0;
+}
+
 .popup{
     background-color: #272B30;
     color: #C8C8C8;
@@ -51,6 +71,11 @@ html {
     background-image: linear-gradient(to bottom, #AAAAAA 0px, #555555 100%);
     background-repeat: repeat-x;
     border-color: #000000;
+}
+
+.container-header
+{
+    width: auto;
 }
 
 #home-logo-div

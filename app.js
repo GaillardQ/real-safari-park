@@ -146,7 +146,7 @@ io.sockets.on('connection', function(socket) {
     });
     
     socket.on('client_server_answer_coords', function(data) {
-        handlerPostCoords(data);
+        handlerPostCoords(socket, data);
     });
 
     socket.on('client_server_answer_new_points', function(data) {
@@ -166,7 +166,6 @@ var __all_pokemons = [];
 
 /********************* MESSAGES *********************/
 function handlerAuth(socket, data) {
-    console.log("Socket : "+util.inspect(socket, false, null));
     function callback()
     {
 	if(debug_mode == true)
@@ -177,6 +176,8 @@ function handlerAuth(socket, data) {
     }
     if(data.fb_id != "unknown_user")
     {
+        data.fb_id += "_"+socket.id;
+        console.log("You are the user :"+data.fb_id);
         dbManager.db_userAuth(data.fb_id, callback);
     }
     else
@@ -194,7 +195,7 @@ function handlerCheckLog(socket, data) {
     dbManager.db_checkUserIsLogged(data.fb_id, callback);
 }
 
-function handlerPostCoords(data) {
+function handlerPostCoords(socket, data) {
     var id = data.id;
     
     client.hget("user", "user_"+id, function(error, user) {
@@ -202,7 +203,7 @@ function handlerPostCoords(data) {
         {
             var user_data = JSON.parse(user);
             user_data.coords = data.coords;
-            checkPokemon(user_data.fb_id, user_data.coords);
+            checkPokemon(user_data.fb_id, user_data.coords, socket);
             user_data.updated_at = new Date().getTime();
             client.hset("user","user_"+user_data.fb_id, JSON.stringify(user_data), redis.print);
         }
@@ -241,8 +242,13 @@ function handlerPostPokemons(data, socket) {
                     var user_data = JSON.parse(user);
                     user_data.coords = data.coords;
                     user_data.updated_at = new Date().getTime();
-                    var user_pokemons = user_data.pokemon;
-                    var i = user_pokemons.length;
+                    var user_pokemons = new Array();
+                    var i = 0;
+                    if(user_data.pokemon != null)
+                    {
+                        i = user_data.pokemon.length;
+                        user_pokemons = user_data.pokemon;
+                    }
                     for(var j=0; j<pokemons.length; j++)
                     {
                         var d = pokemons[j];
@@ -329,7 +335,7 @@ function sendPokemons(json, socket)
 }
 
 /********************* METIER *********************/
-function checkPokemon(fb_id, coords) {
+function checkPokemon(fb_id, coords, socket) {
     function callback(_result)
     {
 	if(debug_mode == true)
@@ -340,8 +346,10 @@ function checkPokemon(fb_id, coords) {
         var data = _result.rows;
         var json = [];
         var i = 0;
-        for(var d in data)
+        var d;
+        for(var j=0; j<data.length; j++)
         {
+            d = data[j];
             if(debug_mode == true)
 	    {
                 console.log("Pokemon : "+util.inspect(d, false, null));
@@ -353,8 +361,8 @@ function checkPokemon(fb_id, coords) {
                 number:d.number,
                 gif:d.gif,
                 png:d.png,
-                category:d.category,
-                place:d.place,
+                rarity:d.category,
+                coords:d.place,
                 expires_at:d.expires_at
             };    
         }
@@ -377,6 +385,12 @@ function checkPokemon(fb_id, coords) {
         if(nb > 0)
         {
             createAPokemon(fb_id, nb);
+        }
+        else
+        {
+            var json = {pokemons: json}
+            
+            sendPokemons(json, socket);
         }
     }
     dbManager.db_checkPokemonInArea(fb_id, coords, zone_length, nb_pokemon_zone, callback);

@@ -21,34 +21,38 @@
     
     <body onLoad="initIndex('{{app_id}}', '{{ host }}')">
         <div class="navbar navbar-default navbar-fixed-top">
-            <div class="container" id="div-park-loader">
-                <div class="navbar-header">
-                    <img src="../images/loader-park.gif" alt="" class="img-responsive navbar-brand" id="park-loader" />
-                </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="../">Pokemon Map</a>
-                    <button class="navbar-toggle" data-target="#navbar-main" data-toggle="collapse"
-                    type="button">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div id="navbar-main" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li>
-                            <a onClick="toggleHelp();return false;">Aide</a>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav" style="float:right;">
-                        <li>
-                            <div>
-                                <div class="fb-login-button" 
-                                data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"
-                                scope="email, user_location, publish_actions"></div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="container container-header" id="div-park-loader">
+                        <div class="row">
+                            <div class="navbar-header col-xs-4 col-sm-1 col-md-1 col-lg-1 no-margin-left no-margin-right">
+                                <img src="../images/loader-park.gif" alt="" class="img-responsive navbar-brand" id="park-loader" />
                             </div>
-                        </li>
-                    </ul>
+                            <div class="navbar-header col-xs-3 col-sm-2 col-md-2 col-lg-2 no-margin-left no-margin-right no-padding-left no-padding-right"> 
+                                <a class="navbar-brand" href="../">Pokemon Map</a>
+                                <button class="navbar-toggle" data-target="#navbar-main" data-toggle="collapse"
+                                type="button">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div id="navbar-main" class="navbar-collapse collapse col-xs-5 col-sm-9 col-md-9 col-lg-9 no-margin-right">
+                                <ul class="nav navbar-nav">
+                                    <li>
+                                        <a onClick="toggleHelp();return false;">Aide</a>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" 
+                                                data-auto-logout-link="true" scope="email, user_location, publish_actions">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

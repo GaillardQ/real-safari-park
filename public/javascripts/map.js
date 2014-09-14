@@ -1,5 +1,4 @@
 function initializeMap() {
-
     var mapOptions = {
         zoom: 18,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
