@@ -55,7 +55,7 @@ function handlerInitNoGeolocation(errorFlag) {
     
     user_location = home_location;
     map.setCenter(user_location);
-    placeUserMarker();
+    placeUserMarker(user_location);
     
     stopParkLoader();
 }
@@ -88,10 +88,10 @@ function handlerFollowGeolocation(position) {
 function actionOnMap() {
     map.setCenter(user_location);
 
-    placeUserMarker();
+    placeUserMarker(user_location);
     
-    console.log("old_user_location : " + old_user_location);
-    console.log("user_location : " + user_location);
+    // console.log("old_user_location : " + old_user_location);
+    // console.log("user_location : " + user_location);
     
     if(old_user_location != user_location)
     {
@@ -118,10 +118,10 @@ function actionOnMap() {
 }
 
 function placeUserMarker(location) {
-    if (location !== null && location !== undefined) {
+    if (location != null && location != undefined) {
         user_location = location;
     }
-
+    
     if (user_marker == null) {
         user_marker = new google.maps.Marker({
             position: user_location,
@@ -164,7 +164,7 @@ function geoLocalization() {
 function handlerGeolocalization(position) {
     old_user_location = user_location;
     user_location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    
+    console.log("User : "+user_location);
     actionOnMap();
     
     sendCoords(user_location);

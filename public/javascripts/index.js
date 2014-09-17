@@ -1,8 +1,8 @@
 var socket;
 
 function initIndex(app_id, host) {
-    initialize(host);
-    socket_auth("unknown_user");
+    //initialize(host);
+    //socket_auth("unknown_user");
     
     window.fbAsyncInit = function() {
         FB.init({
@@ -146,15 +146,16 @@ function displayPokemonsOnMap(data)
 
     map_pokemons = null;
     map_pokemons = new Array();
-
+    
     for (var i = 0; i < nb; i++) {
         var position = new google.maps.LatLng(data.pokemons[i].coords.k, data.pokemons[i].coords.B);
-        //console.log('Pokemon ('+data.pokemons[i].png+'): ' + position);
+        
         var pokemon_coords = new google.maps.Marker({
             position: position,
             title: "Pokemon " + i,
             icon: data.pokemons[i].png
         });
+        
         pokemon_coords.setMap(map);
         
         map_pokemons.push(pokemon_coords);

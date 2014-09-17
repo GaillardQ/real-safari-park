@@ -346,7 +346,7 @@ function checkPokemon(fb_id, coords, socket) {
         var data = _result.rows;
         var json = [];
         var i = 0;
-        var d;
+        var d, place, ar_place, obj_place;
         for(var j=0; j<data.length; j++)
         {
             d = data[j];
@@ -355,6 +355,13 @@ function checkPokemon(fb_id, coords, socket) {
                 console.log("Pokemon : "+util.inspect(d, false, null));
             }
             
+            place = d.place;
+            place = place.slice(1);
+            place = place.substring(0, place.length-1);
+            
+            ar_place = place.split(',');
+            obj_place = {k:ar_place[0], B:ar_place[1]}
+            
             json[i++] = {
                 id:d.id,
                 name:d.name,
@@ -362,7 +369,7 @@ function checkPokemon(fb_id, coords, socket) {
                 gif:d.gif,
                 png:d.png,
                 rarity:d.category,
-                coords:d.place,
+                coords:obj_place,
                 expires_at:d.expires_at
             };    
         }
