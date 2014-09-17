@@ -26,6 +26,11 @@ html {
     margin-bottom: 20px;
 }
 
+.margin-20
+{
+    margin: 20px;
+}
+
 .display-none {
     display: none;
 }
@@ -50,6 +55,15 @@ html {
     padding-right: 0;
 }
 
+.no-margin
+{
+    margin: 0;
+}
+
+.no-padding-right
+{
+    padding: 0;
+}
 .popup{
     background-color: #272B30;
     color: #C8C8C8;
@@ -92,13 +106,19 @@ html {
 #park-loader
 {
     /*height: 50px;*/
+    float:right;
+}
+
+#div_infos_player
+{
+    float:right;    
 }
 
 #loader-init-ui
 {
     position: absolute;
-    padding: 30px;
-    top: 15%;
+   /* padding: 30px;
+    top: 15%;*/
 }
 #loader-init-ui img
 {
