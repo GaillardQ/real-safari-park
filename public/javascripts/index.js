@@ -1,8 +1,8 @@
 var socket;
 
 function initIndex(app_id, host) {
-    //initialize(host);
-    //socket_auth("unknown_user");
+    initialize(host);
+    socket_auth("unknown_user");
     
     window.fbAsyncInit = function() {
         FB.init({
