@@ -111,7 +111,12 @@ html {
 
 #div_infos_player
 {
-    float:right;    
+        float:right; 
+}
+
+#user-avatar
+{
+    vertical-align:middle;
 }
 
 #loader-init-ui
