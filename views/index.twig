@@ -20,15 +20,51 @@
     </head>
     
     <body onLoad="initIndex('{{app_id}}', '{{ host }}')">
-        <div class="navbar navbar-default navbar-fixed-top">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div>
+                        <img class="navbar-brand" src="../images/loader-park.gif" alt="" id="park-loader" />
+                        <a class="navbar-brand" href="../">Real Safari Park</a>
+                    </div>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="menu-el"><a onClick="toggleHelp();return false;">Aide</a></li>
+                        <li class="menu-el">
+                            <a href="#" onClick="return false;">
+                                <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" 
+                                    data-auto-logout-link="true" scope="email, user_location, publish_actions">
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <div id="player-photo" class="div-infos">
+                                <img src="../images/loader-init-ui.png" alt="" class="no-padding" id="park-loader" />
+                            </div>
+                            <div id="player-infos" class="div-infos">Quentin (10 balls)</div>
+                        </li>
+                     </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- <div class="navbar navbar-default navbar-fixed-top">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="container container-header" id="div-park-loader">
                         <div class="row">
-                            <div class="navbar-header col-xs-2 col-sm-1 col-md-1 col-lg-1 no-margin-left no-margin-right">
-                                <img src="../images/loader-park.gif" alt="" class="navbar-brand no-padding-left no-margin-right" id="park-loader" />
+                            <div class="navbar-header col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                <img src="../images/loader-park.gif" alt="" class="navbar-brand" id="park-loader" />
                             </div>
-                            <div class="navbar-header col-xs-10 col-sm-5 col-md-3 col-lg-2 no-margin-left no-margin-right no-padding-left no-padding-right"> 
+                            <div class="navbar-header col-xs-10 col-sm-5 col-md-3 col-lg-2">
                                 <a class="navbar-brand" href="../">Real Safari Park</a>
                                 <button class="navbar-toggle" data-target="#navbar-main" data-toggle="collapse"
                                 type="button">
@@ -43,26 +79,24 @@
                                         <a onClick="toggleHelp();return false;">Aide</a>
                                     </li>
                                     <li>
-                                        <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" 
-                                            data-auto-logout-link="true" scope="email, user_location, publish_actions">
-                                        </div>
+                                       
                                     </li>
                                 </ul>
                             </div>
-                            <div id="div_infos_player" class="col-xs-12 col-sm-4 col-md-5 col-lg-6">
+                            <div id="div_infos_player" class="dev-5 navbar-header col-xs-12 col-sm-4 col-md-5 col-lg-6">
                                 <div class="row">
-                                    <div class="dev-1 col-xs-0 col-sm-0 col-md-6 col-lg-7"></div>
-                                    <!--<img id="user-avatar" src="../images/loader-init-ui.png" alt="loading" class="col-xs-2 col-sm-3 col-md-2 col-lg-1 img-responsive no-margin no-padding" />-->
-                                    <div class="dev-2 col-xs-1 col-sm-3 col-md-2 col-lg-1 no-padding no-padding-left no-padding-margin">TEST</div>
-                                    <div class="dev-3 col-xs-5 col-sm-4 col-md-4 col-lg-4 no-padding no-margin center">Quentin</div>
-                                    <div class="dev-4 col-xs-5 col-sm-5 col-md-4 col-lg-4 no-padding no-margin right">10 Pokéballs</div>
+                                    <div class="dev-1 navbar-brand col-xs-0 col-sm-0 col-md-6 col-lg-7"></div>
+                                    <div class="dev-2 navbar-brand col-xs-0 col-sm-0 col-md-6 col-lg-1 no-padding">PHOTO</div>
+                                    <div class="dev-3 navbar-brand col-xs-0 col-sm-0 col-md-6 col-lg-4 right">Quentin (10 balls) </div>
                                 </div>
-                            </div >
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
+        
+        
         <div class="row">
             <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-2 col-md-offset-3 col-lg-offset-4 popup"
             id="help-popup">

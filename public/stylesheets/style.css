@@ -60,7 +60,7 @@ html {
     margin: 0;
 }
 
-.no-padding-right
+.no-padding
 {
     padding: 0;
 }
@@ -92,6 +92,17 @@ html {
     width: auto;
 }
 
+.div-infos { 
+  width:auto;
+  margin:0 10px; /* espacement horizontal des blocs */
+  border:1px solid #fff;
+  display:inline-block;
+  vertical-align:middle;
+  text-align:left; /* on rétablit l'alignement du texte */
+}
+/**********************************
+    ID
+***********************************/
 #home-logo-div
 {
     top: 10px;
@@ -114,9 +125,10 @@ html {
         float:right; 
 }
 
-#user-avatar
+#player-photo img
 {
-    vertical-align:middle;
+    height: 50px;
+    width: auto;
 }
 
 #loader-init-ui
