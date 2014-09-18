@@ -56,46 +56,6 @@
                 </div>
             </div>
         </nav>
-        <!-- <div class="navbar navbar-default navbar-fixed-top">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="container container-header" id="div-park-loader">
-                        <div class="row">
-                            <div class="navbar-header col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                <img src="../images/loader-park.gif" alt="" class="navbar-brand" id="park-loader" />
-                            </div>
-                            <div class="navbar-header col-xs-10 col-sm-5 col-md-3 col-lg-2">
-                                <a class="navbar-brand" href="../">Real Safari Park</a>
-                                <button class="navbar-toggle" data-target="#navbar-main" data-toggle="collapse"
-                                type="button">
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div id="navbar-main" class="col-xs-0 col-sm-2 col-md-3 col-lg-3 navbar-collapse collapse no-margin-right">
-                                <ul class="nav navbar-nav navbar-left">
-                                    <li>
-                                        <a onClick="toggleHelp();return false;">Aide</a>
-                                    </li>
-                                    <li>
-                                       
-                                    </li>
-                                </ul>
-                            </div>
-                            <div id="div_infos_player" class="dev-5 navbar-header col-xs-12 col-sm-4 col-md-5 col-lg-6">
-                                <div class="row">
-                                    <div class="dev-1 navbar-brand col-xs-0 col-sm-0 col-md-6 col-lg-7"></div>
-                                    <div class="dev-2 navbar-brand col-xs-0 col-sm-0 col-md-6 col-lg-1 no-padding">PHOTO</div>
-                                    <div class="dev-3 navbar-brand col-xs-0 col-sm-0 col-md-6 col-lg-4 right">Quentin (10 balls) </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        
         
         <div class="row">
             <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-2 col-md-offset-3 col-lg-offset-4 popup"
@@ -109,13 +69,13 @@
                 <button type="button" class="btn btn-default right" onClick="toggleHelp();">Close</button>
             </div>
         </div>
-        <div class="row">
+        <div id="logo" class="row">
             <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-2 col-md-offset-3 col-lg-offset-4"  id="loader-init-ui">
                 <img src="../images/logo.png" alt="loading" class="img-responsive" />
             </div>
         </div>
-        <div>
-            <div id="map-canvas" class="display-none" />
+        <div id="map">
+            <div id="map-canvas" class="display-none"></div>
         </div>
         
         <script>
