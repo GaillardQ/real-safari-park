@@ -64,6 +64,12 @@ html {
 {
     padding: 0;
 }
+
+.alert-danger
+{
+    color: #a94442;
+}
+
 .popup{
     background-color: #272B30;
     color: #C8C8C8;
@@ -86,6 +92,7 @@ html {
   vertical-align:middle;
   text-align:left; /* on rétablit l'alignement du texte */
 }
+
 /**********************************
     ID
 ***********************************/
@@ -121,6 +128,16 @@ html {
     height: 100% 
 }
 
+#contact-required
+{
+    font-size: 9px;
+    font-style: italic;
+}
+
+#contact-message
+{
+    resize: none;
+}
 
 /* DEV */
 .dev-1

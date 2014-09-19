@@ -1,0 +1,10 @@
+/*** DB MANAGER ***/
+101 : Error during the function db_connect (db-manager.js)
+102 : Error during the function db_userAuth (db-manager.js)
+103 : Error during the function db_checkUserIsLogged (db-manager.js)
+104 : Error during the function db_getUserFomFbId (db-manager.js)
+105 : Error during the function db_insertUser (db-manager.js)
+106 : Error during the function db_updateUser (db-manager.js)
+107 : Error during the function db_checkPokemonInArea (db-manager.js)
+108 : Error during the function db_savePoppedPokemons (db-manager.js)
+109 : Error during the function db_createNewPokemons (db-manager.js)

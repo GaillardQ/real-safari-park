@@ -18,6 +18,7 @@ try
 
   var routes = require('./routes');
   var index = require('./routes/index');
+  var ws = require('./routes/ws');
   //var park = require('./routes/park');
 
   var app = express();
@@ -38,7 +39,7 @@ catch (err)
 /****** GLOBALES ******/
 google_map_key = 'AIzaSyB6al2AF1Y9NP44-ad_cF55BmxnCpgymEY';
 debug_mode = false;
-env = "dev"; // dev/dev_c9/prod
+env = "dev_c9"; // dev/dev_c9/prod
 zone_length = 65;
 nb_pokemon_zone = 10;
 
@@ -74,6 +75,7 @@ catch (err)
 try
 {
   app.get('/', index.index);
+  app.post('/ws/contact', ws.contact);
   //app.get('/park', park.park);
 }
 catch (err)

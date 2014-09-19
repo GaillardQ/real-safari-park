@@ -163,5 +163,96 @@ function displayPokemonsOnMap(data)
 }
 
 function toggleHelp() {
+    $("#contact-popup").hide();
+    $("#legals-popup").hide();
     $("#help-popup").toggle();
+}
+
+function toggleContactForm()
+{
+    $("#help-popup").hide();
+    $("#legals-popup").hide();
+    $("#contact-popup").toggle();
+}
+
+function validContactForm()
+{
+    var hasError = false;
+    var errorMsg = "Le formulaire contient des erreurs :<ul>";
+    
+    var mail = $("#contact-email").val();
+    if(mail == null || mail == "" || typeof(mail) == undefined)
+    {
+        hasError = true;
+        $("#div-contact-email").addClass("has-error");
+        errorMsg += "<li>Votre e-mail est vide</li>";
+    }
+    else
+    {
+        $("#div-contact-email").removeClass("has-error");
+        $("#div-contact-email").addClass("has-success");
+    }
+        
+    var subject = $("#contact-subject").val();
+    if(subject == 0)
+    {
+        hasError = true;
+        $("#div-contact-subject").addClass("has-error");
+        errorMsg += "<li>Choisissez un sujet</li>";
+    }
+    else
+    {
+        $("#div-contact-subject").removeClass("has-error");
+        $("#div-contact-subject").addClass("has-success");
+    }
+    var message = $("#contact-message").val();
+    if(message == null || message == "" || typeof(message) == undefined)
+    {
+        hasError = true;
+        $("#div-contact-message").addClass("has-error");
+        errorMsg += "<li>Vous devez remplir un message</li>";
+    }
+    else
+    {
+        $("#div-contact-message").removeClass("has-error");
+        $("#div-contact-message").addClass("has-success");
+    }
+    
+    if(hasError == false)
+    {
+        sendContactMail(mail, subject,message);
+    }
+    else
+    {
+        $("#contact-error").removeClass("hidden");
+        $("#contact-error").html(errorMsg);
+    }
+}
+
+function sendContactMail(mail, subject, message)
+{
+    $.ajax({
+        url:"/ws/contact",
+        type : 'POST', // Le type de la requête HTTP, ici devenu POST
+        data : {
+            email: mail,
+            subject: subject,
+            message: message
+        },
+        success:function(result)
+        {
+            alert("sucess");
+        },
+        error:function(result, status, err)
+        {
+            alert("error");
+        }
+    });
+}
+
+function toggleLegals()
+{
+    $("#help-popup").hide();
+    $("#contact-popup").hide();
+    $("#legals-popup").toggle();
 }
