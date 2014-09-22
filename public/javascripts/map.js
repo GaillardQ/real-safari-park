@@ -207,3 +207,20 @@ google.maps.LatLng.prototype.destinationPoint = function(brng, dist) {
 
    return new google.maps.LatLng(toDeg(lat2), toDeg(lon2));
 }
+
+function initializeMasterMap() {
+    var mapOptions = {
+        zoom: 18,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        zoomControl: true,
+        zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL
+        },
+        streetViewControl: false,
+        scaleControl: false,
+        mapTypeControl: false,
+        panControl: true
+    };
+    
+    mapMaster = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+}

@@ -170,9 +170,21 @@ function toggleHelp() {
 
 function toggleContactForm()
 {
+    clearContactForm();
     $("#help-popup").hide();
     $("#legals-popup").hide();
     $("#contact-popup").toggle();
+}
+
+function clearContactForm()
+{
+    $('#contact-error').addClass("hidden");
+    $('#contact-success').addClass("hidden");
+    $('#contact-error').html("");
+    $('#contact-success').html("");
+    $("#contact-email").val("");
+    $("#contact-subject").val(0);
+    $("#contact-message").val("");
 }
 
 function validContactForm()
@@ -231,6 +243,8 @@ function validContactForm()
 
 function sendContactMail(mail, subject, message)
 {
+    var success_msg = "Le message a bien été envoyé.";
+    var error_msg   = "Le message n'a pas pu être envoyé, merci de réessayer ultérieurement.";
     $.ajax({
         url:"/ws/contact",
         type : 'POST', // Le type de la requête HTTP, ici devenu POST
@@ -241,11 +255,25 @@ function sendContactMail(mail, subject, message)
         },
         success:function(result)
         {
-            alert("sucess");
+            if(result.code == 200)
+            {
+                $('#contact-error').addClass("hidden");
+                $('#contact-success').removeClass("hidden");
+                $('#contact-success').html(success_msg);
+            }
+            else
+            {
+                $('#contact-success').addClass("hidden");
+                $('#contact-error').removeClass("hidden");
+                $('#contact-error').html(error_msg);
+            }
         },
         error:function(result, status, err)
         {
-            alert("error");
+            $('#contact-success').addClass("hidden");
+            $('#contact-error').removeClass("hidden");
+            $('#contact-error').html(error_msg);
+            console.log("Error send message : "+err);
         }
     });
 }

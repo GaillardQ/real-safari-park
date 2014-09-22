@@ -2,6 +2,7 @@
 /*** MAP ***/
 /***********/
 var map;
+var mapMaster;
 
 var home_location = new google.maps.LatLng(45.771831, 4.8705933999999615);
 var browserSupportFlag =  new Boolean();

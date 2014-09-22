@@ -19,6 +19,7 @@ try
   var routes = require('./routes');
   var index = require('./routes/index');
   var ws = require('./routes/ws');
+  var master = require('./routes/master');
   //var park = require('./routes/park');
 
   var app = express();
@@ -76,6 +77,7 @@ try
 {
   app.get('/', index.index);
   app.post('/ws/contact', ws.contact);
+  app.get('/master', master.index);
   //app.get('/park', park.park);
 }
 catch (err)

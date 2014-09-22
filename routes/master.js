@@ -1,8 +1,8 @@
 /*
- * GET park page.
+ * GET master pages.
  */
 
-exports.park = function(req, res) {
+exports.index = function(req, res) {
 
     var app_id = "";
     var url = "";
@@ -19,13 +19,13 @@ exports.park = function(req, res) {
         app_id = "268047153375207";
         url = req.protocol+"://"+req.headers.host;
     }
-    
+
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
     res.header("Pragma", "no-cache");
     res.header("Expires", 0);
     
-    res.render('park', {
-        title: 'Real Safari Park',
+    res.render('master_index', {
+        title: 'The master page',
         maps_key: google_map_key,
         app_id: app_id,
         host: url
