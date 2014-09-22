@@ -461,62 +461,65 @@ function checkPokemon(fb_id, coords, socket)
       {
         console.log("We have checked the pokemon in the area for the user " + fb_id);
       }
-
-      var data = _result.rows;
-      var json = [];
-      var i = 0;
-      var d, place, ar_place, obj_place;
-      for (var j = 0; j < data.length; j++)
+      
+      if(_result != null)
       {
-        d = data[j];
-        if (debug_mode == true)
+        var data = _result.rows;
+        var json = [];
+        var i = 0;
+        var d, place, ar_place, obj_place;
+        for (var j = 0; j < data.length; j++)
         {
-          console.log("Pokemon : " + util.inspect(d, false, null));
-        }
-
-        place = d.place;
-        place = place.slice(1);
-        place = place.substring(0, place.length - 1);
-
-        ar_place = place.split(',');
-        obj_place = {k: ar_place[0], B: ar_place[1]}
-
-        json[i++] = {
-          id: d.id,
-          name: d.name,
-          number: d.number,
-          gif: d.gif,
-          png: d.png,
-          rarity: d.category,
-          coords: obj_place,
-          expires_at: d.expires_at
-        };
-      }
-
-      if (i > 0)
-      {
-        // Ajouter les pokemons dans les infos du user dans redis
-        client.hget("user", "user_" + fb_id, function (error, user) {
-          if (error == null && user != null)
+          d = data[j];
+          if (debug_mode == true)
           {
-            var user_data = JSON.parse(user);
-            user_data.updated_at = new Date().getTime();
-            user_data.pokemon = json;
-            client.hset("user", "user_" + user_data.fb_id, JSON.stringify(user_data), redis.print);
+            console.log("Pokemon : " + util.inspect(d, false, null));
           }
-        });
-      }
-
-      var nb = nb_pokemon_zone - _result.rowCount;
-      if (nb > 0)
-      {
-        createAPokemon(fb_id, nb);
-      }
-      else
-      {
-        var json = {pokemons: json}
-
-        sendPokemons(json, socket);
+  
+          place = d.place;
+          place = place.slice(1);
+          place = place.substring(0, place.length - 1);
+  
+          ar_place = place.split(',');
+          obj_place = {k: ar_place[0], B: ar_place[1]}
+  
+          json[i++] = {
+            id: d.id,
+            name: d.name,
+            number: d.number,
+            gif: d.gif,
+            png: d.png,
+            rarity: d.category,
+            coords: obj_place,
+            expires_at: d.expires_at
+          };
+        }
+      
+        if (i > 0)
+        {
+          // Ajouter les pokemons dans les infos du user dans redis
+          client.hget("user", "user_" + fb_id, function (error, user) {
+            if (error == null && user != null)
+            {
+              var user_data = JSON.parse(user);
+              user_data.updated_at = new Date().getTime();
+              user_data.pokemon = json;
+              client.hset("user", "user_" + user_data.fb_id, JSON.stringify(user_data), redis.print);
+            }
+          });
+        }
+  
+        var nb = nb_pokemon_zone - _result.rowCount;
+        if (nb > 0)
+        {
+          createAPokemon(fb_id, nb);
+        }
+        else
+        {
+          var json = {pokemons: json}
+  
+          sendPokemons(json, socket);
+        }
       }
     }
     dbManager.db_checkPokemonInArea(fb_id, coords, zone_length, nb_pokemon_zone, callback);
