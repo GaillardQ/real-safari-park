@@ -139,6 +139,17 @@ html {
     resize: none;
 }
 
+#legals-content
+{
+  text-align: justify;
+  word-wrap: normal;
+  overflow-y: auto;
+  padding: 10px;
+  height: 110px;
+  font-size: 9px;
+  margin-bottom: 20px;
+}
+
 /* DEV */
 .dev-1
 {
