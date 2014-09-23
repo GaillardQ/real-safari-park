@@ -135,7 +135,9 @@ function initialize(host) {
 function displayPokemonsOnMap(data)
 {
     var nb = data.pokemons.length;
-
+    
+    ar_street_view = new Array();
+    
     if (map_pokemons !== null && map_pokemons !== undefined) {
         var p;
         for (var i = 0; i < map_pokemons.length; i++) {
@@ -150,15 +152,53 @@ function displayPokemonsOnMap(data)
     for (var i = 0; i < nb; i++) {
         var position = new google.maps.LatLng(data.pokemons[i].coords.k, data.pokemons[i].coords.B);
         
+        var image = new google.maps.MarkerImage(
+                        data.pokemons[i].gif,
+                        null,
+                        null,
+                        null,
+                        new google.maps.Size(56, 50)
+                    );
+        
         var pokemon_coords = new google.maps.Marker({
             position: position,
             title: "Pokemon " + i,
-            icon: data.pokemons[i].png
+            icon: image//data.pokemons[i].png
         });
         
         pokemon_coords.setMap(map);
         
-        map_pokemons.push(pokemon_coords);
+        map_pokemons[i] = pokemon_coords;
+        data.pokemons[i].map_index = i;
+        
+        if(!first_display && !is_street_view)
+        {
+            if(data.pokemons[i].d <= street_view_d)
+            {
+                ar_street_view.push(data.pokemons[i]);
+            }
+        }
+    }
+    
+    if(!first_display && ar_street_view.length > 0 && !is_street_view)
+    {
+        var n = ar_street_view.length;
+        var a = Math.floor(Math.random()*n);
+        var po = ar_street_view[a];
+        var map_p = map_pokemons[po.map_index];
+        /*var image = new google.maps.MarkerImage(
+                        p.gif,
+                        null,
+                        null,
+                        null,
+                        new google.maps.Size(100, 100)
+                    );
+        map_p.icon = image;*/
+        switchStreetView();
+    }
+    else
+    {
+        first_display = false;
     }
 }
 

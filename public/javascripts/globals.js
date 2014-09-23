@@ -14,6 +14,8 @@ var user_icon = "../images/user/user.png";
 var user_area;
 
 var user_area_radius = 65;
+var first_display = true;
+
 /****************/
 /*** MESSAGES ***/
 /****************/
@@ -28,3 +30,6 @@ var user_id;
 /*** POKEMON ***/
 /***************/
 var map_pokemons;
+var street_view_d = 2;
+var ar_street_view;
+var is_street_view = false;

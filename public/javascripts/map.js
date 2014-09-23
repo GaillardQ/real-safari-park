@@ -222,5 +222,37 @@ function initializeMasterMap() {
         panControl: true
     };
     
-    mapMaster = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    mapMaster = new google.maps.Map(document.getElementById("master-map-canvas"), mapOptions);
+}
+
+function switchStreetView()
+{
+    is_street_view = true;
+    
+    /*var mapOptions = {
+      center: user_location,
+      zoom: 14
+    };
+    
+    var panoramaOptions = {
+      position: user_location,
+      pov: {
+        heading: 34,
+        pitch: 10
+      }
+    };
+    
+    var panorama = new  google.maps.StreetViewPanorama(document.getElementById("pano"), panoramaOptions);
+    map.setStreetView(panorama);
+    $("#map").addClass("hidden");
+    $("#pano").removeClass("hidden");*/
+    
+    var panorama = map.getStreetView();
+    panorama.setPosition(user_location);
+    panorama.setPov(/** @type {google.maps.StreetViewPov} */({
+        heading: 265,
+        pitch: 0
+    }));
+    panorama.setVisible(true);
+
 }

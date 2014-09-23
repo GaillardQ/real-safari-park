@@ -40,7 +40,7 @@ catch (err)
 /****** GLOBALES ******/
 google_map_key = 'AIzaSyB6al2AF1Y9NP44-ad_cF55BmxnCpgymEY';
 debug_mode = false;
-env = "dev"; // dev/dev_c9/prod
+env = "dev_c9"; // dev/dev_c9/prod
 zone_length = 65;
 nb_pokemon_zone = 10;
 
@@ -493,7 +493,8 @@ function checkPokemon(fb_id, coords, socket)
             png: d.png,
             rarity: d.category,
             coords: obj_place,
-            expires_at: d.expires_at
+            expires_at: d.expires_at,
+            d: d.d
           };
         }
       
